@@ -1,10 +1,5 @@
 var system = require('system');
-if (system.args.length !== 2) {
-  console.log("Usage: simpleserver.js <portnumber>");
-  phantom.exit(1);
-}
-console.log("check args");
-var port = system.args[1];
+var port = system.env.PORT;
 var server = require('webserver').create();
 var service = server.listen(port, function (request, response) {
   console.log(JSON.stringify(request, null, 4));
