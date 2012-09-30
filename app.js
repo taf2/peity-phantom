@@ -2,9 +2,14 @@ const System   = require('system');
 const PORT     = System.env.PORT;
 const Server   = require('webserver').create();
 const FS       = require('fs');
+if (System.env.PHANTOMJS_ENV == 'production') {
+  const CachedIndex = FS.read("index.html");
+} else {
+  const CachedIndex = null;
+}
 
 function renderWelcome(request, response) {
-  var res = FS.read("index.html");
+  var res = CachedIndex ? CachedIndex : FS.read("index.html");
   response.statusCode = 200;
   response.headers = {
     'Content-Length': res.length,
@@ -18,14 +23,16 @@ function renderGraph(request, response) {
   var params = request.post;
   var data = params.data;
   var type = params.type;
-  console.log(params);
+  //console.log(params);
   if (!['bar','line','pie'].some(function(t) { return t == type; })) {
     response.statusCode = 406;
+    var res = "{\"status\":\"invalid type\"}";
     response.headers = {
       'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'text/json'
+      'Content-Type': 'text/json',
+      'Content-Length': res.length
     };
-    response.write("{\"status\":\"invalid type\"}");
+    response.write(res);
     response.close();
     return
   }
@@ -51,7 +58,7 @@ function renderGraph(request, response) {
                  "</body></html>";
   
   page.onCallback = function(msg) {
-    console.log(msg);
+    //console.log(msg);
     var dim = JSON.parse(msg);
     page.viewportSize = { width: dim.width, height: dim.height };
     setTimeout(function() {
@@ -71,13 +78,13 @@ function renderGraph(request, response) {
 
   page.onLoadFinished = function() {
     page.evaluate(function() {
-      callPhantom(JSON.stringify({height:$("#charts").height(),width:$("#charts").width()}));
+      callPhantom(JSON.stringify({height:window.$("#charts").height(),width:window.$("#charts").width()}));
     });
   };
 }
 
 var service = Server.listen(PORT, function(request, response) {
-  console.log(JSON.stringify(request, null, 4));
+  //console.log(JSON.stringify(request, null, 4));
   if (request.method == "POST") {
     renderGraph(request, response);
   } else if (request.method == "GET") {
