@@ -84,8 +84,8 @@ function renderGraph(request, response) {
 }
 
 var service = Server.listen(PORT, function(request, response) {
-  //console.log(JSON.stringify(request, null, 4));
-  if (request.path != '/') { response.close(); return; }
+  console.log(JSON.stringify(request, null, 4));
+  if (request.url != '/') { response.close(); return; }
 
   if (request.method == "POST") {
     renderGraph(request, response);
