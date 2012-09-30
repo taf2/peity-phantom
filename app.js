@@ -1,32 +1,52 @@
-var system = require('system');
-var port = system.env.PORT;
-var server = require('webserver').create();
-var service = server.listen(port, function (request, response) {
-  //console.log(JSON.stringify(request, null, 4));
+const System   = require('system');
+const PORT     = System.env.PORT;
+const Server   = require('webserver').create();
+const FS       = require('fs');
+
+function renderWelcome(request, response) {
+  var res = FS.read("index.html");
+  response.statusCode = 200;
+  response.headers = {
+    'Content-Length': res.length,
+    'Content-Type': 'text/html'
+  };
+  response.write(res);
+  response.close();
+}
+
+function renderGraph(request, response) {
   var params = request.post;
   var data = params.data;
   var type = params.type;
+  console.log(params);
   if (!['bar','line','pie'].some(function(t) { return t == type; })) {
     response.statusCode = 406;
     response.headers = {
-      'Cache': 'no-cache',
+      'Access-Control-Allow-Origin': '*',
       'Content-Type': 'text/json'
     };
     response.write("{\"status\":\"invalid type\"}");
     response.close();
     return
   }
-  data = data.split(",").map(function(dp) { return parseFloat(dp); }).filter(function(dp) { return !isNaN(dp); });
+  var dataStr = "";
+  if (type != 'pie') {
+    data = data.split(",").map(function(dp) { return parseFloat(dp); }).filter(function(dp) { return !isNaN(dp); });
+    dataStr = data.join(",");
+  } else {
+    data = data.split("/").map(function(dp) { return parseFloat(dp); }).filter(function(dp) { return !isNaN(dp); });
+    dataStr = data.join("/");
+  }
   var page = require("webpage").create();
   page.viewportSize = { width: 480, height: 800 };
   page.content = "<html><head>" +
                  "<script src='http://code.jquery.com/jquery-1.8.2.min.js'></script>" +
                  "<script src='http://benpickles.github.com/peity/jquery.peity.min.js'></script></head><body>" +
                  "<div id='charts' style='display:inline'>" + 
-                   '<span class="bar">' + data.join(",") + '</span>' +
+                   '<span class="' + type + '">' + dataStr + '</span>' +
                  "</div>"+
                  "<script>" +
-                 '$(".bar").peity("bar")' +
+                 '$(".' + type + '").peity("' + type + '")' +
                  "</script>" +
                  "</body></html>";
   
@@ -54,11 +74,22 @@ var service = server.listen(port, function (request, response) {
       callPhantom(JSON.stringify({height:$("#charts").height(),width:$("#charts").width()}));
     });
   };
+}
+
+var service = Server.listen(PORT, function(request, response) {
+  console.log(JSON.stringify(request, null, 4));
+  if (request.method == "POST") {
+    renderGraph(request, response);
+  } else if (request.method == "GET") {
+    renderWelcome(request, response);
+  } else {
+    response.close();
+  }
 });
 
 if (service) {
-  console.log('Web server running on port ' + port);
+  console.log('Web server running on port ' + PORT);
 } else {
-  console.log('Error: Could not create web server listening on port ' + port);
+  console.log('Error: Could not create web server listening on port ' + PORT);
   phantom.exit();
 }

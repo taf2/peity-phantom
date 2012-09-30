@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <title>Easy Charts! Powered by PhantomJS and Piety Charts</title>
+  <link type='text/css' rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.0.4/css/bootstrap.min.css'/>
+</head>
+<body>
+  <div class='container'>
+    <div class='hero-unit'>
+      <h1>Tiny Charts</h1>
+      <p>A curl interface to piety charts</p>
+    </div>
+    <div class="row">
+      <div class="span4">
+        <h2>Pie Charts</h2>
+        <p id="pie"></p>
+<pre>
+curl http://peity.herokuapp.com/ -d "type=pie" -d "data=1/5"
+</pre>
+      </div>
+      <div class="span4">
+        <h2>Line Charts</h2>
+        <p id="line"></p>
+<pre>
+curl http://peity.herokuapp.com/ -d "type=line" -d "data=5,3,9,6,5,9,7,3,5,2"
+</pre>
+      </div>
+      <div class="span4">
+        <h2>Bar Charts</h2>
+        <p id="bar"></p>
+<pre>
+curl http://peity.herokuapp.com/ -d "type=bar" -d "data=5,3,9,6,5,9,7,3,5,2"
+</pre>
+      </div>
+    </div>
+    <footer>
+      <p>Powered by <a href="http://www.heroku.com/">Heroku</a>, <a href="http://phantomjs.org/">PhantomJS</a> and <a href="http://benpickles.github.com/peity/">Piety Charts</a> brought to you by <a href="https://github.com/taf2">@taf2</a></p>
+    </footer>
+  </div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/bootstrap.min.js"></script>
+<script>
+  $(function() {
+  $.ajaxSetup({contentType: "application/x-www-form-urlencoded"});
+    $.post("/", {type:'pie',data:"1/5"}, function(res) {
+      if (res && res.image) {
+        $("#pie").html("<img src='data:image/png;base64," + res.image + "'/>");
+      }
+    });
+    $.post("/", {type:'line',data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
+      if (res && res.image) {
+        $("#line").html("<img src='data:image/png;base64," + res.image + "'/>");
+      }
+    });
+    $.post("/", {type:'bar',data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
+      if (res && res.image) {
+        $("#bar").html("<img src='data:image/png;base64," + res.image + "'/>");
+      }
+    });
+  });
+</script>
+</body>
+</html>
