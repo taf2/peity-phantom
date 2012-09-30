@@ -2,7 +2,7 @@ var system = require('system');
 var port = system.env.PORT;
 var server = require('webserver').create();
 var service = server.listen(port, function (request, response) {
-  console.log(JSON.stringify(request, null, 4));
+  //console.log(JSON.stringify(request, null, 4));
   var params = request.post;
   var data = params.data;
   var type = params.type;
