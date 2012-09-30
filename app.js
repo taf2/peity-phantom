@@ -85,7 +85,7 @@ function renderGraph(request, response) {
 
 var service = Server.listen(PORT, function(request, response) {
   //console.log(JSON.stringify(request, null, 4));
-  if (request.path == '/favicon.ico') { response.close(); return; }
+  if (request.path != '/') { response.close(); return; }
 
   if (request.method == "POST") {
     renderGraph(request, response);
