@@ -128,6 +128,9 @@ curl http://peity.herokuapp.com/bar?data=5%2C3%2C9%2C6%2C5%2C9%2C7%2C3%2C5%2C2
       var type = $(this).val();
       $("form .options").hide();
       $("#" + type + "-options").show();
+      if (type == 'pie' || type == 'bar' || type == 'line') {
+        $("#sample-form").submit();
+      }
     });
     $("#sample-form").submit(function(e) { e.preventDefault();
       var serialized = $(this).serialize();
@@ -140,7 +143,7 @@ curl http://peity.herokuapp.com/bar?data=5%2C3%2C9%2C6%2C5%2C9%2C7%2C3%2C5%2C2
     });
     $("#gtype").val("pie");
     $("#sample-form").submit();
-      $("#pie-options").show();
+    $("#pie-options").show();
   });
 </script>
 </body>
