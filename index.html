@@ -13,21 +13,21 @@
     <div class="row">
       <div class="span4">
         <h2>Pie Charts</h2>
-        <p id="pie"></p>
+        <p style="width:32px;height:20px;" id="pie"></p>
 <pre>
 curl http://peity.herokuapp.com/ -d "type=pie" -d "data=1/5"
 </pre>
       </div>
       <div class="span4">
         <h2>Line Charts</h2>
-        <p id="line"></p>
+        <p style="width:32px;height:20px;" id="line"></p>
 <pre>
 curl http://peity.herokuapp.com/ -d "type=line" -d "data=5,3,9,6,5,9,7,3,5,2"
 </pre>
       </div>
       <div class="span4">
         <h2>Bar Charts</h2>
-        <p id="bar"></p>
+        <p style="width:32px;height:20px;" id="bar"></p>
 <pre>
 curl http://peity.herokuapp.com/ -d "type=bar" -d "data=5,3,9,6,5,9,7,3,5,2"
 </pre>
@@ -42,19 +42,19 @@ curl http://peity.herokuapp.com/ -d "type=bar" -d "data=5,3,9,6,5,9,7,3,5,2"
 <script>
   $(function() {
   $.ajaxSetup({contentType: "application/x-www-form-urlencoded"});
-    $.post("/", {type:'pie',data:"1/5"}, function(res) {
+    $.get("/pie", {data:"1/5", colors:["#008811","#888fff"]}, function(res) {
       if (res && res.image) {
-        $("#pie").html("<img src='data:image/png;base64," + res.image + "'/>");
+        $("#pie").html("<img style='display:none' src='data:image/png;base64," + res.image + "'/>").find('img').fadeIn();
       }
     });
-    $.post("/", {type:'line',data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
+    $.get("/line", {data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
       if (res && res.image) {
-        $("#line").html("<img src='data:image/png;base64," + res.image + "'/>");
+        $("#line").html("<img style='display:none' src='data:image/png;base64," + res.image + "'/>").find('img').fadeIn();
       }
     });
-    $.post("/", {type:'bar',data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
+    $.get("/bar", {data:"5,3,9,6,5,9,7,3,5,2"}, function(res) {
       if (res && res.image) {
-        $("#bar").html("<img src='data:image/png;base64," + res.image + "'/>");
+        $("#bar").html("<img style='display:none' src='data:image/png;base64," + res.image + "'/>").find('img').fadeIn();
       }
     });
   });
