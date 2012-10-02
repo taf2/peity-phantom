@@ -247,6 +247,7 @@ var service = Server.listen(PORT, function(request, response) {
 
       params.data = decodeURIComponent(uri.getQueryParamValues("data"));
       params.type = type;
+
       console.log(path, "type:", type, JSON.stringify(params));
 
       renderGraph(params, response);
